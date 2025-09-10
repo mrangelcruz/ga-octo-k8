@@ -28,10 +28,13 @@ jobs:
         # This tells the action to perform the ECR login automatically
         ecr-repository: ${{ secrets.ECR_REPO_URI }}
 
-    - name: Echo values for debugging
+    - name: Debug ECR URI format
       run: |
-        echo "ECR Repo URI: ${{ vars.TEMP_ECR_DEBUG }}"
-        echo "GitHub SHA: ${{ github.sha }}"
+        if [[ "${{ secrets.ECR_REPO_URI }}" == *".dkr.ecr."* ]]; then
+          echo "✅ ECR URI format appears correct."
+        else
+          echo "❌ ECR URI format is incorrect. It is missing the '.dkr.ecr.' part."
+        fi
 
     - name: Build and Push Docker image
       run: |
