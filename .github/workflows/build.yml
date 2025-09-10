@@ -23,14 +23,14 @@ jobs:
       uses: aws-actions/configure-aws-credentials@v4
       with:
         role-to-assume: arn:aws:iam::220682131352:role/ECR-full-permission-for-GitHub
-        aws-region: us-east-1
+        aws-region: us-west-2
 
     # This is the new, correct step for ECR login
     - name: Login to Amazon ECR
       run: |
-        aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_REPO_URI }}
+        aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin ${{ secrets.ECR_REPO_URI }}
       env:
-        AWS_REGION: us-east-1
+        AWS_REGION: us-west-2
 
     - name: Build and Push Docker image
       run: |
