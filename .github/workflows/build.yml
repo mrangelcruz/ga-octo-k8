@@ -30,7 +30,7 @@ jobs:
 
     - name: Echo values for debugging
       run: |
-        echo "ECR Repo URI: ${{ secrets.ECR_REPO_URI }}"
+        echo "ECR Repo URI: ${{ vars.TEMP_ECR_DEBUG }}"
         echo "GitHub SHA: ${{ github.sha }}"
 
     - name: Build and Push Docker image
