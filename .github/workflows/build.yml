@@ -19,19 +19,22 @@ jobs:
       with:
         python-version: '3.11'
 
-    - name: Configure AWS Credentials
+    # The magic happens here! ✨
+    - name: Configure AWS Credentials and ECR Login
       uses: aws-actions/configure-aws-credentials@v4
       with:
-        role-to-assume: arn:aws:iam::220682131352:role/ECR-full-permission-for-GitHub
+        role-to-assume: arn:aws:iam::123456789012:role/my-github-actions-ecr-role
         aws-region: us-east-1
+        # This tells the action to perform the ECR login automatically
+        ecr-repository: ${{ secrets.ECR_REPO_URI }}
 
-    - name: Build Docker image
+    - name: Echo values for debugging
+      run: |
+        echo "ECR Repo URI: ${{ secrets.ECR_REPO_URI }}"
+        echo "GitHub SHA: ${{ github.sha }}"
+
+    - name: Build and Push Docker image
       run: |
         IMAGE_TAG=$(echo ${{ github.sha }} | cut -c1-7)
         docker build -t ${{ secrets.ECR_REPO_URI }}:${IMAGE_TAG} .
-        docker tag ${{ secrets.ECR_REPO_URI }}:${IMAGE_TAG} ${{ secrets.ECR_REPO_URI }}:latest
-
-    - name: Push Docker image to ECR
-      run: |
-        docker push ${{ secrets.ECR_REPO_URI }}:latest
-        docker push ${{ secrets.ECR_REPO_URI }}:${{ github.sha }}
+        docker push ${{ secrets.ECR_REPO_URI }}:${IMAGE_TAG}
