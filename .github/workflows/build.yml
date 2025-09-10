@@ -19,22 +19,18 @@ jobs:
       with:
         python-version: '3.11'
 
-    # The magic happens here! ✨
-    - name: Configure AWS Credentials and ECR Login
+    - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v4
       with:
         role-to-assume: arn:aws:iam::220682131352:role/ECR-full-permission-for-GitHub
         aws-region: us-east-1
-        # This tells the action to perform the ECR login automatically
-        ecr-repository: ${{ secrets.ECR_REPO_URI }}
 
-    - name: Debug ECR URI format
+    # This is the new, correct step for ECR login
+    - name: Login to Amazon ECR
       run: |
-        if [[ "${{ secrets.ECR_REPO_URI }}" == *".dkr.ecr."* ]]; then
-          echo "✅ ECR URI format appears correct."
-        else
-          echo "❌ ECR URI format is incorrect. It is missing the '.dkr.ecr.' part."
-        fi
+        aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_REPO_URI }}
+      env:
+        AWS_REGION: us-east-1
 
     - name: Build and Push Docker image
       run: |
