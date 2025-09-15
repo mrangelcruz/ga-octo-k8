@@ -1,4 +1,5 @@
 name: Build and Push Docker Image
+
 on:
   push:
     branches: [ main ]
@@ -8,8 +9,9 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
@@ -25,15 +27,25 @@ jobs:
         role-to-assume: arn:aws:iam::220682131352:role/ECR-full-permission-for-GitHub
         aws-region: us-west-2
 
-    # This is the new, correct step for ECR login
     - name: Login to Amazon ECR
       run: |
         aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin ${{ secrets.ECR_REPO_URI }}
-      env:
-        AWS_REGION: us-west-2
 
-    - name: Build and Push Docker image
+    - name: Build and Push Docker Image
       run: |
         IMAGE_TAG=$(echo ${{ github.sha }} | cut -c1-7)
+        echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
         docker build -t ${{ secrets.ECR_REPO_URI }}:${IMAGE_TAG} .
         docker push ${{ secrets.ECR_REPO_URI }}:${IMAGE_TAG}
+
+    - name: Trigger Octopus Deploy
+      uses: OctopusDeploy/push-package-action@v1
+      with:
+        api_key: ${{ secrets.OCTOPUS_API_KEY }}
+        server: ${{ secrets.OCTOPUS_SERVER_URL }}
+        space: ${{ secrets.OCTOPUS_SPACE }}
+        project: ${{ secrets.OCTOPUS_PROJECT }}
+        deploy_to: ${{ secrets.OCTOPUS_ENVIRONMENT }}
+        release_number: ${{ github.run_number }}
+        package_version: ${{ env.IMAGE_TAG }}
+        # Optional: Add `git_ref` or `branch` metadata here if needed
