@@ -1,0 +1,23 @@
+replicaCount: 1
+
+image:
+  repository: 220682131352.dkr.ecr.us-west-2.amazonaws.com/angels-ecr
+  tag: 6cbeb85
+  pullPolicy: IfNotPresent
+
+service:
+  type: NodePort
+  port: 5000
+  nodePort: 30500 # Must be between 30000–32767
+
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  annotations: {}
+  hosts:
+  - host: flask.local
+    paths:
+    - path: /
+      pathType: Prefix
+
+resources: {}
