@@ -46,6 +46,7 @@ jobs:
           OCTOPUS_ENVIRONMENT: "Production"
           RELEASE_NUMBER: ${{ github.sha }}
         run: |
+          curl -s -H "X-Octopus-ApiKey: $OCTOPUS_API_KEY" "$OCTOPUS_SERVER/api/$OCTOPUS_SPACE/environments"
           # Get Release ID
           RELEASE_ID=$(curl -s -H "X-Octopus-ApiKey: $OCTOPUS_API_KEY" "$OCTOPUS_SERVER/api/$OCTOPUS_SPACE/projects/$OCTOPUS_PROJECT/releases/$RELEASE_NUMBER" | jq -r .Id)
 
