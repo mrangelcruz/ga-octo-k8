@@ -27,6 +27,15 @@ jobs:
         run: |
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/flask-app:${{ github.sha }}
 
+      - name: Create Octopus Release
+        uses: OctopusDeploy/create-release-action@v3
+        with:
+          api_key: ${{ secrets.OCTOPUS_API_KEY }}
+          server: ${{ secrets.OCTOPUS_SERVER }}
+          project: "Flask App Deployment"
+          release_number: ${{ github.sha }}
+          deploy_to: "Production"
+
 
     # - name: Trigger Octopus Deploy
     #   uses: OctopusDeploy/push-package-action@v1
