@@ -32,6 +32,7 @@ jobs:
         with:
           api_key: ${{ secrets.OCTOPUS_API_KEY }}
           server: ${{ secrets.OCTOPUS_SERVER }}
+          space: ${{ secrets.OCTOPUS_SPACE }}
           project: "Flask App Deployment"
           release_number: ${{ github.sha }}
           deploy_to: "Production"
