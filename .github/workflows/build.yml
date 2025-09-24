@@ -32,18 +32,31 @@ jobs:
         with:
           api_key: ${{ secrets.OCTOPUS_API_KEY }}
           server: ${{ secrets.OCTOPUS_SERVER }}
-          space: ${{ secrets.OCTOPUS_SPACE }}
+          space: "Spaces-1"
           project: "Flask App Deployment"
           release_number: ${{ github.sha }}
-          deploy_to: "Production"
 
 
       - name: Deploy Octopus Release
+        env:
+          OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY }}
+          OCTOPUS_SERVER: ${{ secrets.OCTOPUS_SERVER }}
+          OCTOPUS_SPACE: "Spaces-1"
+          OCTOPUS_PROJECT: "flask-app"
+          OCTOPUS_ENVIRONMENT: "Production"
+          RELEASE_NUMBER: ${{ github.sha }}
         run: |
-          curl -X POST "${{ secrets.OCTOPUS_SERVER }}/api/${{ secrets.OCTOPUS_SPACE }}/deployments" \
-            -H "X-Octopus-ApiKey: ${{ secrets.OCTOPUS_API_KEY }}" \
+          # Get Release ID
+          RELEASE_ID=$(curl -s -H "X-Octopus-ApiKey: $OCTOPUS_API_KEY" "$OCTOPUS_SERVER/api/$OCTOPUS_SPACE/projects/$OCTOPUS_PROJECT/releases/$RELEASE_NUMBER" | jq -r .Id)
+
+          # Get Environment ID
+          ENVIRONMENT_ID=$(curl -s -H "X-Octopus-ApiKey: $OCTOPUS_API_KEY" "$OCTOPUS_SERVER/api/$OCTOPUS_SPACE/environments" | jq -r ".Items[] | select(.Name==\"$OCTOPUS_ENVIRONMENT\") | .Id")
+
+          # Trigger Deployment
+          curl -X POST "$OCTOPUS_SERVER/api/$OCTOPUS_SPACE/deployments" \
+            -H "X-Octopus-ApiKey: $OCTOPUS_API_KEY" \
             -H "Content-Type: application/json" \
-            -d '{
-              "ReleaseId": "'"$(curl -s -H \"X-Octopus-ApiKey: ${{ secrets.OCTOPUS_API_KEY }}\" ${{ secrets.OCTOPUS_SERVER }}/api/${{ secrets.OCTOPUS_SPACE }}/projects/${{ secrets.OCTOPUS_PROJECT }}/releases/${{ github.sha }} | jq -r .Id)"'",
-              "EnvironmentId": "'"$(curl -s -H \"X-Octopus-ApiKey: ${{ secrets.OCTOPUS_API_KEY }}\" ${{ secrets.OCTOPUS_SERVER }}/api/${{ secrets.OCTOPUS_SPACE }}/environments | jq -r '.Items[] | select(.Name==\"${{ secrets.OCTOPUS_ENVIRONMENT }}\") | .Id')"'" 
-            }'
+            -d "{
+              \"ReleaseId\": \"$RELEASE_ID\",
+              \"EnvironmentId\": \"$ENVIRONMENT_ID\"
+            }"
