@@ -16,7 +16,9 @@ with open("config.yaml", "r") as f:
 color_map = {
     "red": "#ff0000",
     "yellow": "#ffff00",
-    "green": "#00ff00"
+    "green": "#00ff00",
+    "grey": "#808080",
+    "blue": "#ADD8E6"
 }
 
 # === Get Project VariableSetId ===
