@@ -41,7 +41,7 @@ jobs:
         env:
           OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY }}
           OCTOPUS_SERVER: ${{ secrets.OCTOPUS_SERVER }}
-          OCTOPUS_SPACE: "Default"
+          OCTOPUS_SPACE: "Spaces-1"
           OCTOPUS_PROJECT: "flask-app"
           OCTOPUS_ENVIRONMENT: "Production"
           RELEASE_NUMBER: ${{ github.sha }}
