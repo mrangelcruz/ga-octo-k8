@@ -4,4 +4,4 @@ environment:
   Staging:
     color: black
   Production:
-    color: red
+    color: pink

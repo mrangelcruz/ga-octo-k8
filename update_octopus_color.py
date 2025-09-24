@@ -19,7 +19,8 @@ color_map = {
     "green": "#00ff00",
     "grey": "#808080",
     "blue": "#ADD8E6",
-    "black": "#000000"
+    "black": "#000000",
+    "pink": "#FFC0CB"
 }
 
 # === Get Project VariableSetId ===
