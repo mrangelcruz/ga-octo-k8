@@ -1,7 +1,7 @@
 environment:
   Development:
-    color: grey
+    color: pink
   Staging:
-    color: black
+    color: pink
   Production:
     color: pink
