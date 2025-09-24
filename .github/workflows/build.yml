@@ -42,15 +42,12 @@ jobs:
           OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY }}
           OCTOPUS_SERVER: ${{ secrets.OCTOPUS_SERVER }}
           OCTOPUS_SPACE: "Spaces-1"
-          OCTOPUS_PROJECT_ID: "Projects-41" 
-          OCTOPUS_PROJECT: "flask-app"
+          OCTOPUS_PROJECT_ID: "Projects-41"
           OCTOPUS_ENVIRONMENT: "Production"
           RELEASE_NUMBER: ${{ github.sha }}
-        run: |        
-          curl -s -H "X-Octopus-ApiKey: $OCTOPUS_API_KEY" "$OCTOPUS_SERVER/api/$OCTOPUS_SPACE/environments"
-
+        run: |
           # Get Release ID
-          RELEASE_ID=$(curl -s -H "X-Octopus-ApiKey: $OCTOPUS_API_KEY" "$OCTOPUS_SERVER/api/$OCTOPUS_SPACE/projects/$OCTOPUS_PROJECT/releases/$RELEASE_NUMBER" | jq -r .Id)
+          RELEASE_ID=$(curl -s -H "X-Octopus-ApiKey: $OCTOPUS_API_KEY" "$OCTOPUS_SERVER/api/$OCTOPUS_SPACE/projects/$OCTOPUS_PROJECT_ID/releases/$RELEASE_NUMBER" | jq -r .Id)
 
           # Get Environment ID
           ENVIRONMENT_ID=$(curl -s -H "X-Octopus-ApiKey: $OCTOPUS_API_KEY" "$OCTOPUS_SERVER/api/$OCTOPUS_SPACE/environments" | jq -r ".Items[] | select(.Name==\"$OCTOPUS_ENVIRONMENT\") | .Id")
