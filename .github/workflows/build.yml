@@ -43,7 +43,7 @@ jobs:
           OCTOPUS_SERVER: ${{ secrets.OCTOPUS_SERVER }}
           OCTOPUS_SPACE: "Spaces-1"
           OCTOPUS_PROJECT_ID: "Projects-41"
-          OCTOPUS_ENVIRONMENT: "Production"
+          OCTOPUS_ENVIRONMENT: "Development"
           RELEASE_NUMBER: ${{ github.sha }}
         run: |
           # Get Release ID
