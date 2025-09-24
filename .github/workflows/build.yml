@@ -51,14 +51,16 @@ jobs:
           # Get Release ID
           RELEASE_ID=$(curl -s -H "X-Octopus-ApiKey: $OCTOPUS_API_KEY" "$OCTOPUS_SERVER/api/$OCTOPUS_SPACE/projects/$OCTOPUS_PROJECT/releases/$RELEASE_NUMBER" | jq -r .Id)
 
-          # Get Environment ID
-          ENVIRONMENT_ID=$(curl -s -H "X-Octopus-ApiKey: $OCTOPUS_API_KEY" "$OCTOPUS_SERVER/api/$OCTOPUS_SPACE/environments" | jq -r ".Items[] | select(.Name==\"$OCTOPUS_ENVIRONMENT\") | .Id")
+          echo "Realease id:: {RELEASE_ID}"
 
-          # Trigger Deployment
-          curl -X POST "$OCTOPUS_SERVER/api/$OCTOPUS_SPACE/deployments" \
-            -H "X-Octopus-ApiKey: $OCTOPUS_API_KEY" \
-            -H "Content-Type: application/json" \
-            -d "{
-              \"ReleaseId\": \"$RELEASE_ID\",
-              \"EnvironmentId\": \"$ENVIRONMENT_ID\"
-            }"
+          # # Get Environment ID
+          # ENVIRONMENT_ID=$(curl -s -H "X-Octopus-ApiKey: $OCTOPUS_API_KEY" "$OCTOPUS_SERVER/api/$OCTOPUS_SPACE/environments" | jq -r ".Items[] | select(.Name==\"$OCTOPUS_ENVIRONMENT\") | .Id")
+
+          # # Trigger Deployment
+          # curl -X POST "$OCTOPUS_SERVER/api/$OCTOPUS_SPACE/deployments" \
+          #   -H "X-Octopus-ApiKey: $OCTOPUS_API_KEY" \
+          #   -H "Content-Type: application/json" \
+          #   -d "{
+          #     \"ReleaseId\": \"$RELEASE_ID\",
+          #     \"EnvironmentId\": \"$ENVIRONMENT_ID\"
+          #   }"
