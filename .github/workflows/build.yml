@@ -38,14 +38,12 @@ jobs:
           deploy_to: "Production"
 
 
-    # - name: Trigger Octopus Deploy
-    #   uses: OctopusDeploy/push-package-action@v1
-    #   with:
-    #     api_key: ${{ secrets.OCTOPUS_API_KEY }}
-    #     server: ${{ secrets.OCTOPUS_SERVER_URL }}
-    #     space: ${{ secrets.OCTOPUS_SPACE }}
-    #     project: ${{ secrets.OCTOPUS_PROJECT }}
-    #     deploy_to: ${{ secrets.OCTOPUS_ENVIRONMENT }}
-    #     release_number: ${{ github.run_number }}
-    #     package_version: ${{ env.IMAGE_TAG }}
-    #     # Optional: Add `git_ref` or `branch` metadata here if needed
+      - name: Deploy Octopus Release
+        run: |
+          curl -X POST "${{ secrets.OCTOPUS_SERVER }}/api/${{ secrets.OCTOPUS_SPACE }}/deployments" \
+            -H "X-Octopus-ApiKey: ${{ secrets.OCTOPUS_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "ReleaseId": "'"$(curl -s -H \"X-Octopus-ApiKey: ${{ secrets.OCTOPUS_API_KEY }}\" ${{ secrets.OCTOPUS_SERVER }}/api/${{ secrets.OCTOPUS_SPACE }}/projects/${{ secrets.OCTOPUS_PROJECT }}/releases/${{ github.sha }} | jq -r .Id)"'",
+              "EnvironmentId": "'"$(curl -s -H \"X-Octopus-ApiKey: ${{ secrets.OCTOPUS_API_KEY }}\" ${{ secrets.OCTOPUS_SERVER }}/api/${{ secrets.OCTOPUS_SPACE }}/environments | jq -r '.Items[] | select(.Name==\"${{ secrets.OCTOPUS_ENVIRONMENT }}\") | .Id')"'" 
+            }'
