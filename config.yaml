@@ -1,0 +1,7 @@
+environment:
+  Development:
+    color: red
+  Staging:
+    color: yellow
+  Production:
+    color: green
