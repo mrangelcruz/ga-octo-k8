@@ -1,7 +1,8 @@
-environment:
-  Development:
-    color: pink
-  Staging:
-    color: pink
-  Production:
-    color: pink
+topics:
+  github-actions:
+    email_subscribers:
+      - "mrangelcruz@gmail.com"
+      - "anghotpekpek@gmail.com"
+  deployment-notifications:
+    email_subscribers:
+      - "mrangelcruz@gmail.com"
