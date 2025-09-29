@@ -6,3 +6,11 @@ topics:
   deployment-notifications:
     email_subscribers:
       - "mrangelcruz@gmail.com"
+
+environment:
+  Development:
+    color: grey
+  Staging:
+    color: black
+  Production:
+    color: pink
