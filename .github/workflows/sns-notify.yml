@@ -1,0 +1,35 @@
+# Note: The `create` event does not support a `branches` filter in GitHub Actions.
+# To restrict runs to branch creations we trigger on `create` and use a job-level
+# `if` conditional (startsWith(github.ref, 'refs/heads/')) to ignore tag creates.
+# We also expose a manual `workflow_dispatch` so you can test this workflow without
+# actually creating a branch (use the `branch_name` input).
+
+name: Notify on Branch Creation
+
+on:
+  create:
+  workflow_dispatch:
+    inputs:
+      branch_name:
+        description: 'Optional branch name to test (e.g. feature/test)'
+        required: false
+
+jobs:
+  notify:
+    if: ${{ (github.event_name == 'create' && startsWith(github.ref, 'refs/heads/')) || github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Send SNS Notification
+        env:
+          SNS_TOPIC_ARN: ${{ secrets.SNS_TOPIC_ARN }}
+          BRANCH_NAME: ${{ github.event.inputs.branch_name || github.ref_name }}
+        run: |
+          MESSAGE="New branch created: $BRANCH_NAME in repo ${{ github.repository }}"
+          aws sns publish --topic-arn "$SNS_TOPIC_ARN" --message "$MESSAGE"
